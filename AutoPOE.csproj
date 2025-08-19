@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="AStar">
+      <HintPath>Resources\AStar.dll</HintPath>
+    </Reference>
+    <Reference Include="ExileCore">
+      <HintPath>Resources\ExileCore.dll</HintPath>
+    </Reference>
+    <Reference Include="GameOffsets">
+      <HintPath>Resources\GameOffsets.dll</HintPath>
+    </Reference>
+    <Reference Include="ImGui.NET">
+      <HintPath>Resources\ImGui.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>Resources\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>Resources\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
