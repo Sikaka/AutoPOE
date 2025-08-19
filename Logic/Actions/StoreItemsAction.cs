@@ -74,8 +74,6 @@ namespace AutoPOE.Logic.Actions
                 SimulacrumState.StoreItemAttemptCount++;
             }
 
-            await Controls.ClosePanels();
-
             return ActionResultType.Success;
         }
 

@@ -38,6 +38,10 @@ namespace AutoPOE
         [Menu("Simulacrum Wave Delay", "Minimum time (in seconds) after wave ends before starting a new one.")]
         public RangeNode<int> Simulacrum_MinimumWaveDelay { get; set; } = new RangeNode<int>(5, 1, 20);
 
+
+        [Menu("Use Incubators", "Should we apply incubators (from stash) to our equipment? EXPERIMENTAL")]
+        public ToggleNode UseIncubators { get; set; } = new ToggleNode(false);
+
         [Menu("Store Item Threshold", "How many items before we dump to stash.")]
         public RangeNode<int> StoreItemThreshold { get; set; } = new RangeNode<int>(20, 5, 60);
 

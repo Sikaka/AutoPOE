@@ -89,7 +89,6 @@ namespace AutoPOE.Logic.Actions
                 }
             }
 
-            await Controls.ClosePanels();
 
             return ActionResultType.Success;
         }

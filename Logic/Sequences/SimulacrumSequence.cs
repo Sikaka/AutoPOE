@@ -56,7 +56,7 @@ namespace AutoPOE.Logic.Sequences
                 (GetStorableInventoryCount >= Core.Settings.StoreItemThreshold || _currentTask?.GetType() == typeof(StoreItemsAction)))
                 return new StoreItemsAction();
 
-            if (!SimulacrumState.IsWaveActive && SimulacrumState.HasAvailableIncubators && HasEmptyIncubatorSlots())
+            if (Core.Settings.UseIncubators && !SimulacrumState.IsWaveActive && SimulacrumState.HasAvailableIncubators && HasEmptyIncubatorSlots())
                 return new ApplyIncubatorsAction();
 
             if (SimulacrumState.IsWaveActive)
