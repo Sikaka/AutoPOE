@@ -42,6 +42,10 @@ namespace AutoPOE
         [Menu("Use Incubators", "Should we apply incubators (from stash) to our equipment? EXPERIMENTAL")]
         public ToggleNode UseIncubators { get; set; } = new ToggleNode(false);
 
+
+        [Menu("Revive Mercenary", "Should we revive our mercenary if they die?")]
+        public ToggleNode ReviveMercenary { get; set; } = new ToggleNode(false);
+
         [Menu("Store Item Threshold", "How many items before we dump to stash.")]
         public RangeNode<int> StoreItemThreshold { get; set; } = new RangeNode<int>(20, 5, 60);
 

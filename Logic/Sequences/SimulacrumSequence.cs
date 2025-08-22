@@ -37,7 +37,7 @@ namespace AutoPOE.Logic.Sequences
 
 
         private IAction GetNextAction()
-        {
+        {            
 
             if (!Core.GameController.Player.IsAlive && Core.GameController.IngameState.IngameUi.ResurrectPanel.IsVisible)
                 return new ReviveAction();
@@ -58,6 +58,9 @@ namespace AutoPOE.Logic.Sequences
 
             if (Core.Settings.UseIncubators && !SimulacrumState.IsWaveActive && SimulacrumState.HasAvailableIncubators && HasEmptyIncubatorSlots())
                 return new ApplyIncubatorsAction();
+
+            if (Core.ShouldReviveMercenary() && DateTime.Now > Core.NextReviveMercAt)
+                return new ReviveMercenaryAction();
 
             if (SimulacrumState.IsWaveActive)
                 return Core.Map.ClosestTargetableMonster != null ? new CombatAction() : new ExploreAction();

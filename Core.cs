@@ -1,4 +1,5 @@
-﻿using AutoPOE.Navigation;
+﻿using AutoPOE.Logic.Actions;
+using AutoPOE.Navigation;
 using ExileCore;
 using System.ComponentModel.Design;
 using System.Reflection.Metadata.Ecma335;
@@ -44,6 +45,14 @@ namespace AutoPOE
         }
 
 
+        public static DateTime NextReviveMercAt = DateTime.Now;
+        public static bool ShouldReviveMercenary()
+        {
 
+            var leagueElement = GameController.IngameState.IngameUi.LeagueMechanicButtons.GetChildFromIndices(8, 1);
+            if (leagueElement == null || !leagueElement.IsVisible)
+                return false;
+            return leagueElement.Tooltip.GetTextWithNoTags(256).Contains("Revive this Mercenary");
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace AutoPOE.Logic.Actions
 
         public async Task<ActionResultType> Tick()
         {
-            if(SimulacrumState.StoreItemAttemptCount > 100)
+            if (SimulacrumState.StoreItemAttemptCount > 100)
             {
                 Core.IsBotRunning = false;
                 return ActionResultType.Exception;
@@ -70,7 +70,7 @@ namespace AutoPOE.Logic.Actions
                 if (!Core.GameController.IngameState.IngameUi.InventoryPanel.IsVisible) return ActionResultType.Failure;
                 var center = item.GetClientRect().Center;
                 await Controls.ClickScreenPos(new Vector2(center.X, center.Y), isLeft: true, exactPosition: false, holdCtrl: true);
-                await Task.Delay(Core.Settings.ActionFrequency);
+                await Task.Delay(Core.Settings.ActionFrequency * 2);
                 SimulacrumState.StoreItemAttemptCount++;
             }
 
