@@ -28,9 +28,18 @@ namespace AutoPOE.Logic.Actions
                 _currentPath = null;
                 _actionTimeout = DateTime.Now.AddSeconds(2);
             }
-            if (DateTime.Now > _actionTimeout)            
+            if (DateTime.Now > _actionTimeout)
+            {
+                //The looting task timed out. We'll assume it failed to click and toggle the loot icons on and off.
+                if (Core.Settings.LootItemsUnstick)
+                {
+                    await Controls.UseKey(Keys.Z);
+                    await Task.Delay(Core.Settings.ActionFrequency * 2);
+                    await Controls.UseKey(Keys.Z);
+                    await Task.Delay(Core.Settings.ActionFrequency * 2);
+                }
                 return ActionResultType.Failure;
-            
+            }
 
             if (playerPos.Distance(item.Entity.GridPosNum) < Core.Settings.NodeSize)
             {
@@ -51,8 +60,6 @@ namespace AutoPOE.Logic.Actions
             }
 
             await _currentPath.FollowPath();
-
-
             return ActionResultType.Running;
         }
         public void Render()

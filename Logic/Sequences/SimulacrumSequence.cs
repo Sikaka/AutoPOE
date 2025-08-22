@@ -2,6 +2,7 @@
 using ExileCore;
 using ExileCore.PoEMemory.Components;
 using ExileCore.Shared.Enums;
+using ExileCore.Shared.Helpers;
 using System.Numerics;
 
 namespace AutoPOE.Logic.Sequences
@@ -68,8 +69,12 @@ namespace AutoPOE.Logic.Sequences
             else if (DateTime.Now > SimulacrumState.CanStartWaveAt)
                 return SimulacrumState.CurrentWave < 15 ? new StartWaveAction() : new LeaveMapAction();
 
+            //Combat isn't running and we're pretty far away from the center of the map. Create an explore action to walk there?
+            else if (Core.GameController.Player.GridPosNum.Distance(Core.Map.GetSimulacrumCenter()) > Core.Settings.NodeSize * 5)
+                return new ExploreAction();
 
-            return new IdleAction();
+
+                return new IdleAction();
         }
 
 
