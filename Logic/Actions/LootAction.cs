@@ -11,8 +11,6 @@ namespace AutoPOE.Logic.Actions
 
         private Navigation.Path? _currentPath;
         private uint? _targetItemId;
-        private DateTime _actionTimeout = DateTime.Now.AddSeconds(2);
-
 
         public async Task<ActionResultType> Tick()
         {
@@ -28,18 +26,16 @@ namespace AutoPOE.Logic.Actions
                 _currentPath = null;
             }
 
-            if (DateTime.Now > _actionTimeout)
+
+            //We haven't moved in multiple seconds. Try to unstuck by using Z twice. 
+            if (Core.Settings.LootItemsUnstick && (DateTime.Now > SimulacrumState.LastMovedAt.AddSeconds(3) || DateTime.Now > SimulacrumState.LastToggledLootAt.AddSeconds(5)))
             {
-                //The looting task timed out. We'll assume it failed to click and toggle the loot icons on and off.
-                if (Core.Settings.LootItemsUnstick)
-                {
-                    await Controls.UseKey(Keys.Z);
-                    await Task.Delay(Core.Settings.ActionFrequency * 2);
-                    await Controls.UseKey(Keys.Z);
-                    await Task.Delay(Core.Settings.ActionFrequency * 2);
-                }
-                return ActionResultType.Failure;
+                await Controls.UseKey(Keys.Z);
+                await Task.Delay(Core.Settings.ActionFrequency);
+                await Controls.UseKey(Keys.Z);
+                SimulacrumState.LastToggledLootAt = DateTime.Now;
             }
+            
 
             if (playerPos.Distance(item.Entity.GridPosNum) < Core.Settings.NodeSize)
             {
@@ -76,7 +72,7 @@ namespace AutoPOE.Logic.Actions
             foreach (var item in possibleItems)
                 Core.Graphics.DrawCircle(new Vector2(item.ClientRect.Center.X, item.ClientRect.Center.Y), 10, SharpDX.Color.Pink);
 
-            Core.Graphics.DrawText($"Count: {possibleItems.Count()}  ID: {_targetItemId} Timeout: {_actionTimeout}", new Vector2(125, 125));
+            Core.Graphics.DrawText($"Count: {possibleItems.Count()}  ID: {_targetItemId}", new Vector2(125, 125));
             _currentPath?.Render();
             
         }

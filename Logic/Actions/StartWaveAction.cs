@@ -11,10 +11,6 @@ namespace AutoPOE.Logic.Actions
 
         private Random _random = new Random();
         private Navigation.Path? _currentPath;
-
-        private Vector2 _lastPosition = Vector2.Zero;
-        private DateTime _lastMovedAt = DateTime.Now;
-
         public StartWaveAction()
         {
             //Set an initial path.         
@@ -29,17 +25,11 @@ namespace AutoPOE.Logic.Actions
             var playerPos = Core.GameController.Player.GridPosNum;
             var monolith = Core.GameController.EntityListWrapper.OnlyValidEntities.FirstOrDefault(I => I.Metadata.Contains("Objects/Afflictionator"));
 
-            if (playerPos != _lastPosition)
-            {
-                _lastMovedAt = DateTime.Now;
-                _lastPosition = playerPos;
-            }
-
-            if ((DateTime.Now - _lastMovedAt).TotalSeconds > 2)
+            if (DateTime.Now > SimulacrumState.LastMovedAt.AddSeconds(2))
             {
                 var nextPos = Core.GameController.Player.GridPosNum + new Vector2(_random.Next(-50, 50), _random.Next(-50, 50));
                 await Controls.UseKeyAtGridPos(nextPos, Core.Settings.GetNextMovementSkill());
-                return ActionResultType.Failure;
+                return ActionResultType.Exception;
             }
 
             if (_currentPath != null && !_currentPath.IsFinished)

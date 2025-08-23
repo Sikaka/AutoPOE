@@ -13,8 +13,6 @@ namespace AutoPOE.Logic.Actions
 
         private Random _random = new Random();
         private Navigation.Path? _currentPath;
-        private Vector2 _lastPosition = Vector2.Zero;
-        private DateTime _lastMovedAt = DateTime.Now;
 
         public async Task<ActionResultType> Tick()
         {
@@ -23,18 +21,12 @@ namespace AutoPOE.Logic.Actions
                 return ActionResultType.Exception;
 
             var playerPos = Core.GameController.Player.GridPosNum;
-            if (playerPos != _lastPosition)
-            {
-                _lastMovedAt = DateTime.Now;
-                _lastPosition = playerPos;
-            }
 
-
-            if ((DateTime.Now - _lastMovedAt).TotalSeconds > 2)
+            if (DateTime.Now > SimulacrumState.LastMovedAt.AddSeconds(2))
             {
                 var nextPos = Core.GameController.Player.GridPosNum + new Vector2(_random.Next(-50, 50), _random.Next(-50, 50));
                 await Controls.UseKeyAtGridPos(nextPos, Core.Settings.GetNextMovementSkill());
-                return ActionResultType.Failure;
+                return ActionResultType.Exception;
             }
 
             if (_currentPath != null && !_currentPath.IsFinished)

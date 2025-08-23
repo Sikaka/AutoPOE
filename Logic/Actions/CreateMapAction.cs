@@ -10,6 +10,7 @@ namespace AutoPOE.Logic.Actions
 {
     public class CreateMapAction : IAction
     {
+        private Random _random = new Random();
         private Navigation.Path? _currentPath;
         bool isMapOpened = false;
 
@@ -18,7 +19,14 @@ namespace AutoPOE.Logic.Actions
             if (!Core.GameController.Area.CurrentArea.IsHideout)
                 return ActionResultType.Success;
 
-            var playerPos = Core.GameController.Player.GridPosNum;            
+            var playerPos = Core.GameController.Player.GridPosNum;
+
+            if (DateTime.Now > SimulacrumState.LastMovedAt.AddSeconds(4))
+            {
+                var nextPos = Core.GameController.Player.GridPosNum + new Vector2(_random.Next(-50, 50), _random.Next(-50, 50));
+                await Controls.UseKeyAtGridPos(nextPos, Core.Settings.GetNextMovementSkill());
+                return ActionResultType.Exception;
+            }
 
             if (isMapOpened)
             {

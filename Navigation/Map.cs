@@ -13,6 +13,7 @@ namespace AutoPOE.Navigation
 {
     public class Map
     {
+        private Random _random = new Random();
         private List<uint> _blacklistItemIds = [];
         private readonly WorldGrid _worldGrid;
         private readonly PathFinder _pathFinder;
@@ -180,10 +181,10 @@ namespace AutoPOE.Navigation
 
         private T? FindClosestGeneric<T>(IEnumerable<T> source, Func<T, bool> predicate, Func<T, float> distanceSelector) where T : class
         {
-            return source.Where(predicate).MinBy(distanceSelector);
+            return source.Where(predicate)
+                .OrderBy(I => _random.Next())
+                .MinBy(distanceSelector);
         }
-
-
 
 
         public Entity? ClosestTargetableMonster =>

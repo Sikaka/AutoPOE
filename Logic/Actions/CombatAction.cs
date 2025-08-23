@@ -12,53 +12,33 @@ namespace AutoPOE.Logic.Actions
         private Navigation.Path? _currentPath;
         private (Vector2 Position, float Weight) _bestFightPos;
         private const float RepositionThreshold = 1.25f;
-        private DateTime _lastActionTime = DateTime.Now;
-        private const int StuckTimeoutMs = 2000; // 2 seconds
 
         public async Task<ActionResultType> Tick()
         {
-            bool didSomething = false;
-            if (await CastTargetSelfSpells())
-                didSomething = true;
-            if(await CastTargetMercenarySpells())
-                didSomething = true;
-            if (await CastTargetMonsterSpells())
-                didSomething = true;
+            await CastTargetSelfSpells();
+            await CastTargetMercenarySpells();
+            await CastTargetMonsterSpells();
 
             var playerPos = Core.GameController.Player.GridPosNum;
             var currentWeight = Core.Map.GetPositionFightWeight(playerPos);
             _bestFightPos = Core.Map.FindBestFightingPosition();
 
             // Always try to generate a new path if none exists
-            if (_currentPath == null && _bestFightPos.Weight > currentWeight * RepositionThreshold)
-            {
-                _currentPath = Core.Map.FindPath(playerPos, _bestFightPos.Position);
-                if (_currentPath != null)
-                    didSomething = true;
-            }
+            if (_currentPath == null && _bestFightPos.Weight > currentWeight * RepositionThreshold)            
+                _currentPath = Core.Map.FindPath(playerPos, _bestFightPos.Position);            
 
-            if (_currentPath != null && !_currentPath.IsFinished)
-            {
-                await _currentPath.FollowPath();
-                didSomething = true;
-            }
+            if (_currentPath != null && !_currentPath.IsFinished)            
+                await _currentPath.FollowPath();            
             else
                 _currentPath = null;
 
-
-            if (didSomething)
+            if (DateTime.Now > SimulacrumState.LastMovedAt.AddSeconds(2))
             {
-                _lastActionTime = DateTime.Now;
-                return ActionResultType.Running;
-            }
-            // If stuck for more than timeout, return Failure to force sequence reset
-            if ((DateTime.Now - _lastActionTime).TotalMilliseconds > StuckTimeoutMs)
-            {
-                var nextPos = Core.GameController.Player.GridPosNum + new Vector2(_random.Next(-20, 20), _random.Next(-20, 20));
+                var nextPos = Core.GameController.Player.GridPosNum + new Vector2(_random.Next(-50, 50), _random.Next(-50, 50));
                 await Controls.UseKeyAtGridPos(nextPos, Core.Settings.GetNextMovementSkill());
-                _lastActionTime = DateTime.Now;
-                return ActionResultType.Failure;
+                return ActionResultType.Exception;
             }
+
             return ActionResultType.Running;
         }
 

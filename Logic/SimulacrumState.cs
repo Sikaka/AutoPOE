@@ -40,6 +40,10 @@ namespace AutoPOE.Logic
 
         public static int StoreItemAttemptCount = 0;
 
+        public static Vector2 LastPosition = Vector2.Zero;
+        public static DateTime LastMovedAt = DateTime.Now;
+        public static DateTime LastToggledLootAt = DateTime.Now;
+
         private static void WaveChanged()
         {
             StoreItemAttemptCount = 0;
@@ -61,6 +65,15 @@ namespace AutoPOE.Logic
 
         public static void Tick()
         {
+
+            var playerPos = Core.GameController.Player.GridPosNum;
+
+            if(playerPos != LastPosition)
+            {
+                LastPosition = playerPos;
+                LastMovedAt = DateTime.Now;
+            }
+
             if (Core.GameController.IngameState.IngameUi.StashElement.VisibleStash != null)
                 Core.HasIncubators = Core.GameController.IngameState.IngameUi.StashElement.VisibleStash?.VisibleInventoryItems
                        .Any(item => item.TextureName.Contains("Incubation/")) ?? false;
