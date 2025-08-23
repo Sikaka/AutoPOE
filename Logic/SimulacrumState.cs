@@ -38,7 +38,6 @@ namespace AutoPOE.Logic
         private static DateTime LastUpdatedAt { get; set; }
         public static DateTime CanStartWaveAt { get; private set; }
 
-        public static bool HasAvailableIncubators = false;
         public static int StoreItemAttemptCount = 0;
 
         private static void WaveChanged()
@@ -62,15 +61,14 @@ namespace AutoPOE.Logic
 
         public static void Tick()
         {
-            if (Core.GameController.IngameState.IngameUi.StashElement.IsVisible)
-            {
-                HasAvailableIncubators = Core.GameController.IngameState.IngameUi.StashElement.VisibleStash?.VisibleInventoryItems
+            if (Core.GameController.IngameState.IngameUi.StashElement.VisibleStash != null)
+                Core.HasIncubators = Core.GameController.IngameState.IngameUi.StashElement.VisibleStash?.VisibleInventoryItems
                        .Any(item => item.TextureName.Contains("Incubation/")) ?? false;
-            }
 
             var townPortal = Core.GameController.EntityListWrapper.ValidEntitiesByType[ExileCore.Shared.Enums.EntityType.TownPortal]
                     .OrderBy(portal => portal.DistancePlayer)
                     .FirstOrDefault();
+
             if (townPortal != null) PortalPosition = townPortal.GridPosNum;
 
             var monolith = Core.GameController.EntityListWrapper.OnlyValidEntities.FirstOrDefault(I => I.Metadata.Contains("Objects/Afflictionator"));

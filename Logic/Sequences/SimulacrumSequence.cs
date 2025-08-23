@@ -29,17 +29,17 @@ namespace AutoPOE.Logic.Sequences
             }
         }
 
+
         public void Render()
         {
             var actionName = _currentAction?.GetType().Name ?? "None";
             Core.Graphics.DrawText($"Running: {Core.IsBotRunning} Current Action: {actionName}. {SimulacrumState.DebugText}", new Vector2(100, 100), SharpDX.Color.White);
-            _currentAction?.Render();
+             _currentAction?.Render();
         }
 
 
         private IAction GetNextAction()
-        {            
-
+        {
             if (!Core.GameController.Player.IsAlive && Core.GameController.IngameState.IngameUi.ResurrectPanel.IsVisible)
                 return new ReviveAction();
 
@@ -52,13 +52,10 @@ namespace AutoPOE.Logic.Sequences
 
             if (Core.Map.ClosestValidGroundItem != null)
                 return new LootAction();
-            
-            if (!SimulacrumState.IsWaveActive && SimulacrumState.StashPosition.HasValue && 
-                (GetStorableInventoryCount >= Core.Settings.StoreItemThreshold || _currentTask?.GetType() == typeof(StoreItemsAction)))
-                return new StoreItemsAction();
 
-            if (Core.Settings.UseIncubators && !SimulacrumState.IsWaveActive && SimulacrumState.HasAvailableIncubators && HasEmptyIncubatorSlots())
-                return new ApplyIncubatorsAction();
+            if (!SimulacrumState.IsWaveActive && SimulacrumState.StashPosition.HasValue &&
+                (CanUseIncubators() || GetStorableInventoryCount >= Core.Settings.StoreItemThreshold))
+                return new StoreItemsAction();
 
             if (Core.ShouldReviveMercenary() && DateTime.Now > Core.NextReviveMercAt)
                 return new ReviveMercenaryAction();
@@ -69,32 +66,30 @@ namespace AutoPOE.Logic.Sequences
             else if (DateTime.Now > SimulacrumState.CanStartWaveAt)
                 return SimulacrumState.CurrentWave < 15 ? new StartWaveAction() : new LeaveMapAction();
 
-            //Combat isn't running and we're pretty far away from the center of the map. Create an explore action to walk there?
-            else if (Core.GameController.Player.GridPosNum.Distance(Core.Map.GetSimulacrumCenter()) > Core.Settings.NodeSize * 5)
-                return new ExploreAction();
 
-
-                return new IdleAction();
+            return new IdleAction();
         }
 
 
         private static int GetStorableInventoryCount => Core.GameController.IngameState.Data.ServerData.PlayerInventories[0].Inventory.InventorySlotItems.Count;
 
-        private bool HasEmptyIncubatorSlots()
+
+        private bool CanUseIncubators()
         {
+            if (!Core.Settings.UseIncubators || !Core.HasIncubators) return false;
+
             var equipment = Core.GameController.IngameState.ServerData.PlayerInventories
                 .Where(inv => inv.Inventory.InventSlot >= InventorySlotE.BodyArmour1 && inv.Inventory.InventSlot <= InventorySlotE.Belt1 && inv.Inventory.Items.Count == 1)
-                .Select(inv => inv.Inventory);
+                .Select(inv => inv.Inventory)
+                .ToList();
 
             foreach (var equip in equipment)
             {
                 var incubatorName = equip.Items.FirstOrDefault()?.GetComponent<Mods>()?.IncubatorName;
                 if (string.IsNullOrEmpty(incubatorName))
-                {
-                    return true; // Found an empty slot
-                }
+                    return true;
             }
-            return false; // No empty slots
+            return false;
         }
     }
 }

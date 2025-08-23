@@ -65,29 +65,20 @@ namespace AutoPOE
 
             if (holdCtrl)
             {
-                //Confirm ctrl is not already pressed down.
-                if (Input.IsKeyDown(Keys.LControlKey))
-                    Input.KeyUp(Keys.LControlKey);
-
-
                 Input.KeyDown(Keys.LControlKey);
                 await Task.Delay(random.Next(20, 50));
             }
-
-            //Make sure ctrl is not pressed.
-            else if (Input.IsKeyDown(Keys.LControlKey))
-                Input.KeyUp(Keys.LControlKey);
 
             if (isLeft)
                 await LeftClick();
             else
                 await RightClick();
 
-            await Task.Delay(random.Next(30, 75));
-            if (holdCtrl)
+            if (Input.IsKeyDown(Keys.LControlKey))
                 Input.KeyUp(Keys.LControlKey);
 
-            Core.ActionPerformed(); 
+            await Task.Delay(random.Next(30, 75));
+            Core.ActionPerformed();
         }
 
         public static async Task UseKeyAtGridPos(Vector2 pos, Keys key, bool exactPosition = false)

@@ -17,6 +17,8 @@ namespace AutoPOE
         public static Main Plugin { get; private set; }
         public static Map Map { get; private set; }
 
+        public static bool HasIncubators = false;
+
         /// <summary>
         /// Initializes the core components. This must be called once when the plugin starts.
         /// </summary>

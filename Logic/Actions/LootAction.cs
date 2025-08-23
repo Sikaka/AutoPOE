@@ -26,8 +26,8 @@ namespace AutoPOE.Logic.Actions
             {
                 _targetItemId = item.Entity.Id;
                 _currentPath = null;
-                _actionTimeout = DateTime.Now.AddSeconds(2);
             }
+
             if (DateTime.Now > _actionTimeout)
             {
                 //The looting task timed out. We'll assume it failed to click and toggle the loot icons on and off.
@@ -62,6 +62,7 @@ namespace AutoPOE.Logic.Actions
             await _currentPath.FollowPath();
             return ActionResultType.Running;
         }
+
         public void Render()
         {
             var possibleItems = Core.GameController.IngameState.IngameUi.ItemsOnGroundLabelElement.VisibleGroundItemLabels
