@@ -1,4 +1,5 @@
-﻿using ExileCore.Shared.Enums;
+﻿using ExileCore.PoEMemory.Components;
+using ExileCore.Shared.Enums;
 using ExileCore.Shared.Helpers;
 using System.Numerics;
 using static AutoPOE.Settings.Skill;
@@ -15,6 +16,7 @@ namespace AutoPOE.Logic.Actions
 
         public async Task<ActionResultType> Tick()
         {
+            await DetonateMines();
             await CastTargetSelfSpells();
             await CastTargetMercenarySpells();
             await CastTargetMonsterSpells();
@@ -50,10 +52,20 @@ namespace AutoPOE.Logic.Actions
             return true;
         }
 
+        private async Task<bool> DetonateMines()
+        {
+            if (!Core.GameController.Player.Buffs.Any(buff => buff.Name == "mine_mana_reservation"))
+                return false;
+            if (!Core.Settings.ShouldDetonateMines) return false;
+            await Controls.UseKeyAtGridPos(Core.GameController.Player.GridPosNum, Core.Settings.DetonateMinesKey.Value);
+            await Task.Delay(Core.Settings.ActionFrequency);
+            return true;
+        }
+
         private async Task<bool> CastTargetMercenarySpells()
         {
             var merc = Core.GameController.EntityListWrapper.ValidEntitiesByType[EntityType.Monster]
-                .FirstOrDefault(m => m.IsAlive && m.IsTargetable && !m.IsHostile && m.GridPosNum.Distance(Core.GameController.Player.GridPosNum) <= Core.Settings.CombatDistance);
+                .FirstOrDefault(m => m.IsAlive && m.IsTargetable && !m.IsHostile && m.GridPosNum.Distance(Core.GameController.Player.GridPosNum) <= Core.Settings.ViewDistance);
             if (merc == null) return false;
 
             var skill = Core.Settings.GetNextCombatSkill(Settings.Skill.CastTypeSort.TargetMercenary);

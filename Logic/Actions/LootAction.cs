@@ -33,8 +33,17 @@ namespace AutoPOE.Logic.Actions
                 await Controls.UseKey(Keys.Z);
                 await Task.Delay(Core.Settings.ActionFrequency);
                 await Controls.UseKey(Keys.Z);
+                await Task.Delay(500);
                 SimulacrumState.LastToggledLootAt = DateTime.Now;
             }
+
+            
+
+            //Try to catch if we somehow left the loot labels disabled...
+            if (SimulacrumState.StashPosition != null &&
+                playerPos.Distance(SimulacrumState.StashPosition.Value) < Core.Settings.ViewDistance &&
+                !Core.GameController.IngameState.IngameUi.ItemsOnGroundLabelsVisible.Any(I =>I.ItemOnGround != null && !string.IsNullOrEmpty(I.ItemOnGround.Metadata)&& I.ItemOnGround.Metadata.Contains("Metadata/MiscellaneousObjects/Stash")))            
+                await Controls.UseKey(Keys.Z);
             
 
             if (playerPos.Distance(item.Entity.GridPosNum) < Core.Settings.NodeSize)

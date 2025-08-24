@@ -39,9 +39,8 @@ namespace AutoPOE
         public RangeNode<int> Simulacrum_MinimumWaveDelay { get; set; } = new RangeNode<int>(5, 1, 20);
 
 
-        [Menu("Use Incubators", "Should we apply incubators (from stash) to our equipment? EXPERIMENTAL")]
-        public ToggleNode UseIncubators { get; set; } = new ToggleNode(false);
-
+        [Menu("Use Incubators", "Should we apply incubators (from stash) to our equipment?")]
+        public ToggleNode UseIncubators { get; set; } = new ToggleNode(true);
 
         [Menu("Revive Mercenary", "Should we revive our mercenary if they die?")]
         public ToggleNode ReviveMercenary { get; set; } = new ToggleNode(false);
@@ -53,13 +52,18 @@ namespace AutoPOE
         [Menu("Store Item Threshold", "How many items before we dump to stash.")]
         public RangeNode<int> StoreItemThreshold { get; set; } = new RangeNode<int>(20, 5, 60);
 
+
+        [Menu("Detonate Mines Key")]
+        public HotkeyNode DetonateMinesKey { get; set; } = (HotkeyNode)Keys.D;
+        public ToggleNode ShouldDetonateMines { get; set; } = new ToggleNode(false);
+
         /// <summary>
         /// Finds an available movement skill that is ready to be cast.
         /// </summary>
         public Keys GetNextMovementSkill()
         {
             var usableSkillNames = GetUsableSkillNames();
-            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5 };
+            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5, Skill6 };
 
             var validMovementSkills = allSkills
                 .Where(s => s.IsMovementKey.Value && usableSkillNames.Contains(s.SkillName.Value) && DateTime.Now > s.NextCast)
@@ -75,7 +79,7 @@ namespace AutoPOE
         public List<Skill> GetAvailableMonsterTargetingSkills()
         {
             var usableSkillNames = GetUsableSkillNames();
-            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5 };
+            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5, Skill6 };
 
             return allSkills
                 .Where(I => DateTime.Now > I.NextCast &&
@@ -90,7 +94,7 @@ namespace AutoPOE
         public Skill GetNextCombatSkill(Skill.CastTypeSort targetType)
         {
             var usableSkillNames = GetUsableSkillNames();
-            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5 };
+            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5, Skill6 };
 
             var validCombatSkills = allSkills
                 .Where(s => s.CastType.Value == targetType.ToString() &&
@@ -119,6 +123,7 @@ namespace AutoPOE
         public Skill Skill3 { get; set; } = new Skill { Hotkey = (HotkeyNode)Keys.E };
         public Skill Skill4 { get; set; } = new Skill { Hotkey = (HotkeyNode)Keys.R };
         public Skill Skill5 { get; set; } = new Skill { Hotkey = (HotkeyNode)Keys.T };
+        public Skill Skill6 { get; set; } = new Skill { Hotkey = (HotkeyNode)Keys.F };
 
 
         /// <summary>
@@ -137,8 +142,9 @@ namespace AutoPOE
             Skill3.SkillName.SetListValues(skillOptions);
             Skill4.SkillName.SetListValues(skillOptions);
             Skill5.SkillName.SetListValues(skillOptions);
+            Skill6.SkillName.SetListValues(skillOptions);
 
-            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5 };
+            var allSkills = new List<Skill> { Skill1, Skill2, Skill3, Skill4, Skill5, Skill6 };
 
             foreach (var skill in allSkills.Where(I => I.SkillName == "Move"))
                 skill.MinimumDelay.Value = 100;

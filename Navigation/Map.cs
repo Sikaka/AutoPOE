@@ -247,7 +247,7 @@ namespace AutoPOE.Navigation
         }
 
 
-        public ItemsOnGroundLabelElement.VisibleGroundItemDescription? ClosestValidGroundItem =>
+        public ItemsOnGroundLabelElement.VisibleGroundItemDescription? ClosestValidGroundItem =>            
             FindClosestGeneric(Core.GameController.IngameState.IngameUi.ItemsOnGroundLabelElement.VisibleGroundItemLabels,
                 item => item != null &&
                         item.Label != null &&
